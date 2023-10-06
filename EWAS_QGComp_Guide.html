@@ -12,7 +12,7 @@
 <meta name="author" content="Dennis Khodasevich" />
 
 
-<title>EWAS QGComp</title>
+<title>QGCompEWAS</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -355,7 +355,7 @@ pre code {
 
 
 
-<h1 class="title toc-ignore">EWAS QGComp</h1>
+<h1 class="title toc-ignore">QGCompEWAS</h1>
 <h4 class="author">Dennis Khodasevich</h4>
 
 </div>
@@ -417,7 +417,8 @@ require(tidyverse)                  # dataframe management and plotting
 require(qgcomp)                     # running quantile g-computation
 require(data.table)                 # dataframe management
 
-source(&quot;EWAS_QGComp_Functions.R&quot;)   # load EWAS QGComp functions</code></pre>
+# load EWAS QGComp functions
+source(&quot;https://raw.githubusercontent.com/D-Khodasevich/QGCompEWAS/main/EWAS_QGComp_Functions.R&quot;)  </code></pre>
 <p>Then load the 2 required datasets:<br />
 1. <strong>pheno</strong>: a dataframe containing exposure and covariate
 data<br />
