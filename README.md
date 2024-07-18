@@ -25,7 +25,7 @@ Where:
     increase in all exposures simultaneously  
 -   $S_i$ is the exposure index, a summary measure incorporating the
     weights and effect size for each included quantized exposure. The
-    exposure index can be further specified as
+    exposure index can be further specified as  
     $$S_i = \sum_{j=1}^{d} \beta_jX_{j,i}$$
 
 The interpretation of the overall mixture effect comes from the $\psi$
