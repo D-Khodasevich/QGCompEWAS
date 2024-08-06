@@ -1,6 +1,7 @@
 QGCompEWAS
 ================
-Dennis Khodasevich (denniskhod@gmail.com)
+Dennis Khodasevich (denkhod@stanford.edu, denniskhod@gmail.com)  
+Implementation of the EWAS application of Quantile G Computation used in [Khodasevich et al 2024](https://www.sciencedirect.com/science/article/pii/S0160412024004483?via%3Dihub)
 
 # EWAS Quantile G-Computation User Guide
 
@@ -18,15 +19,21 @@ model that characterizes the change in the expected potential outcome
 given a joint intervention on all exposures, conditional on confounders.
 The general model structure is shown below:  
 
-$$Y_i=\beta_0+\psi S_i + \beta_W\mathbf{W}$$  
+```math
+Y_i=\beta_0+\psi S_i + \beta_W\mathbf{W}  
+```
+
 Where:  
 
 -   $\psi$ is the expected change in the outcome, given a one quantile
     increase in all exposures simultaneously  
 -   $S_i$ is the exposure index, a summary measure incorporating the
     weights and effect size for each included quantized exposure. The
-    exposure index can be further specified as  
-    $$S_i = \sum_{j=1}^{d} \beta_jX_{j,i}$$
+    exposure index can be further specified as: 
+
+```math
+S_i = \sum_{j=1}^{d} \beta_jX_{j,i}
+```
 
 The interpretation of the overall mixture effect comes from the $\psi$
 estimate and associated 95% confidence interval. Characterization of the
@@ -317,6 +324,86 @@ ggplot(neg) +
 
 ![](EWAS_QGComp_Guide_files/figure-gfm/unnamed-chunk-13-2.png)<!-- -->
 
+### Follow-up Analyses
+
+#### Identification of Differentialy Methylated Regions with comb-p
+
+The results dataframe from the ewas_qgcomp output can directly be used
+as input for differentially methylated region analysis with
+[comb-p](https://rdrr.io/bioc/ENmix/man/combp.html).
+
+``` r
+library(tidyverse)
+library(ENmix)
+library(IlluminaHumanMethylation450kanno.ilmn12.hg19)
+library(IlluminaHumanMethylation450kmanifest)
+
+# get 450K annotation data
+annot <- as.data.frame(getAnnotation(IlluminaHumanMethylation450kanno.ilmn12.hg19))
+annot$probe <- rownames(annot)
+# Required input is a data frame with colnames “chr”, “start”, “end”, “p” and “probe”
+annot <- annot %>% 
+  dplyr::select(probe, chr, pos)
+
+res <- results %>% 
+  dplyr::select(probeID, pval) %>%                    # combp uses p values to identify DMRs
+  dplyr::rename(probe = probeID, 
+                p = pval)
+input_dat <- left_join(res, annot, by="probe")    # join with annotation
+input_dat$end <- input_dat$pos
+input_dat <- input_dat %>% 
+  dplyr::select(chr, pos, end, p, probe) %>% 
+  dplyr::rename(start = pos)
+
+input_dat$chr = as.numeric(substring(input_dat$chr,4)) # format chromosome name
+
+# run combp
+combp(input_dat, region_plot = T, mht_plot = F, dist.cutoff=1000, seed=0.001, 
+      nCores=1, verbose = T) 
+```
+
+    ## P value correlations:
+    ##        bin        acf
+    ## 0.cor  310 0.10257204
+    ## 1.cor  620 0.04871360
+    ## 2.cor  930 0.02690203
+    ## 3.cor 1000 0.01257599
+    ## Number of identified DMR:  0
+
+``` r
+# output saved as "resu_combp.csv" to working directory
+# note: no DMRs are identified because this example is only using a subset of ~180,000 CpGs
+```
+
+#### Enrichment of Biological Pathways with gometh
+
+You can additionally test for biological pathway enrichment in your
+results using the gometh (of goregion for DMRs) function from the
+missMethyl R package.
+
+``` r
+library(missMethyl)
+ann <- getAnnotation(IlluminaHumanMethylation450kanno.ilmn12.hg19)
+sig_probes <- results %>%   # subset to significant probes 
+  filter(pval < 0.001)      # would use a more stringent threshold in practice
+
+# GO testing (collection options include "GO" and "KEGG")
+go_results <- gometh(sig.cpg = sig_probes$probeID, all.cpg = results$probeID, 
+                     collection = "GO", 
+               prior.prob=TRUE, anno=ann)
+go_results %>% 
+  arrange(P.DE) %>% 
+  dplyr::select(N, DE, P.DE, FDR, TERM) %>% 
+  head(5)
+```
+
+    ##             N DE        P.DE FDR                                TERM
+    ## GO:0060170 23  4 0.003881018   1                    ciliary membrane
+    ## GO:0030145 26  4 0.006432103   1               manganese ion binding
+    ## GO:0007416 66  7 0.007890797   1                    synapse assembly
+    ## GO:0097396  5  2 0.008214933   1          response to interleukin-17
+    ## GO:0097398  5  2 0.008214933   1 cellular response to interleukin-17
+
 ## Bootstrap Version of EWAS QGComp
 
 Bootstrapping is not feasible for large scale analysis. However, one can
@@ -362,3 +449,4 @@ Unlike the noboot version, “component_effects” will contain both the
 positive and negative effect estimates from each model. The sum of all
 individual component effect sizes will sum to the overall mixture
 effect.
+
