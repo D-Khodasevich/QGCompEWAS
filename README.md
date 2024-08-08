@@ -19,29 +19,19 @@ model that characterizes the change in the expected potential outcome
 given a joint intervention on all exposures, conditional on confounders.
 The general model structure is shown below:  
 
-```math
-Y_i=\beta_0+\psi S_i + \beta_W\mathbf{W}  
-```
-
-Where:  
+$$Y_i=\beta_0+\psi X_{ji}^q + \beta_W\mathbf{W} + \epsilon_i$$ Where:  
 
 -   $\psi$ is the expected change in the outcome, given a one quantile
     increase in all exposures simultaneously  
--   $S_i$ is the exposure index, a summary measure incorporating the
-    weights and effect size for each included quantized exposure. The
-    exposure index can be further specified as: 
-
-```math
-S_i = \sum_{j=1}^{d} \beta_jX_{j,i}
-```
+-   W corresponds to specified confounders  
 
 The interpretation of the overall mixture effect comes from the $\psi$
 estimate and associated 95% confidence interval. Characterization of the
-exposure index $S_i$ allows users to determine the mixture components
-that are contributing most to the overall mixture effect. Quantile
-g-computation is somewhat similar in interpretation to Weighted quantile
-sum (WQS) regression, but without the restriction of directional
-homogeneity and potential benefits in smaller sample sizes.  
+exposure index allows users to determine the mixture components that are
+contributing most to the overall mixture effect. Quantile g-computation
+is somewhat similar in interpretation to Weighted quantile sum (WQS)
+regression, but without the restriction of directional homogeneity and
+potential benefits in smaller sample sizes.  
 
 ewas_qgcomp allows a large number of quantile g-computation models to be
 efficiently run on a dataset containing many outcome variables (eg. DNA
