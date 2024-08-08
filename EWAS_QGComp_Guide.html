@@ -376,8 +376,8 @@ structural model that characterizes the change in the expected potential
 outcome given a joint intervention on all exposures, conditional on
 confounders. The general model structure is shown below:<br />
 </p>
-<p><span class="math display">\[Y_i=\beta_0+\psi S_i +
-\beta_W\mathbf{W}\]</span><br />
+<p><span class="math display">\[Y_i=\beta_0+\psi X_{ji}^q +
+\beta_W\mathbf{W} + \epsilon_i\]</span><br />
 Where:<br />
 </p>
 <ul>
@@ -385,19 +385,16 @@ Where:<br />
 the outcome, given a one quantile increase in all exposures
 simultaneously<br />
 </li>
-<li><span class="math inline">\(S_i\)</span> is the exposure index, a
-summary measure incorporating the weights and effect size for each
-included quantized exposure. The exposure index can be further specified
-as <span class="math display">\[S_i = \sum_{j=1}^{d}
-\beta_jX_{j,i}\]</span></li>
+<li>W corresponds to specified confounders<br />
+</li>
 </ul>
 <p>The interpretation of the overall mixture effect comes from the <span class="math inline">\(\psi\)</span> estimate and associated 95%
-confidence interval. Characterization of the exposure index <span class="math inline">\(S_i\)</span> allows users to determine the mixture
-components that are contributing most to the overall mixture effect.
-Quantile g-computation is somewhat similar in interpretation to Weighted
-quantile sum (WQS) regression, but without the restriction of
-directional homogeneity and potential benefits in smaller sample
-sizes.<br />
+confidence interval. Characterization of the exposure index allows users
+to determine the mixture components that are contributing most to the
+overall mixture effect. Quantile g-computation is somewhat similar in
+interpretation to Weighted quantile sum (WQS) regression, but without
+the restriction of directional homogeneity and potential benefits in
+smaller sample sizes.<br />
 </p>
 <p>ewas_qgcomp allows a large number of quantile g-computation models to
 be efficiently run on a dataset containing many outcome variables (eg.
