@@ -19,7 +19,9 @@ model that characterizes the change in the expected potential outcome
 given a joint intervention on all exposures, conditional on confounders.
 The general model structure is shown below:  
 
-$$Y_i=\beta_0+\psi X_{ji}^q + \beta_W\mathbf{W} + \epsilon_i$$ Where:  
+$$Y_i=\beta_0+\psi X_{ji}^q + \beta_W\mathbf{W} + \epsilon_i$$  
+
+Where:  
 
 -   $\psi$ is the expected change in the outcome, given a one quantile
     increase in all exposures simultaneously  
